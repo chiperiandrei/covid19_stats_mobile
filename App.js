@@ -1,8 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, Text, Image, Dimensions} from 'react-native';
+import {View, Text, Image, Dimensions} from 'react-native';
 import {FlatGrid} from 'react-native-super-grid';
 import FadeIn from 'react-native-fade-in-image';
 import Axios from 'axios';
+import InfoPage from './components/InfoPage';
+import ProgressCircle from 'react-native-progress-circle';
 
 export default function Example() {
   const [items, setItems] = React.useState([
@@ -63,7 +65,8 @@ export default function Example() {
           <Text
             style={{
               fontSize: 20,
-              textAlign:"center"
+              textAlign: 'center',
+              fontWeight: 'bold',
             }}>
             On {dateToStringFromObject()} in Romania we have
           </Text>
@@ -71,31 +74,40 @@ export default function Example() {
         <FlatGrid
           itemDimension={130}
           data={items}
-          style={styles.gridView}
+          style={{
+            marginTop: 10,
+            flex: 1,
+          }}
           spacing={10}
           renderItem={({item}) => (
-            <View style={[styles.itemContainer, {backgroundColor: item.code}]}>
-              {item.name === 'INFECTED' ? (
-                <Text style={styles.itemNumber}>
-                  {dataCovid.currentDayStats.numberInfected}
-                </Text>
-              ) : null}
-              {item.name === 'DEADS' ? (
-                <Text style={styles.itemNumber}>
-                  {dataCovid.currentDayStats.numberCured}
-                </Text>
-              ) : null}
-              {item.name === 'CURED' ? (
-                <Text style={styles.itemNumber}>
-                  {dataCovid.currentDayStats.numberDeceased}
-                </Text>
-              ) : null}
-              
-              <Text style={styles.itemName}>{item.display}</Text>
-            
-            </View>
+            <InfoPage dataCovid={dataCovid} item={item} />
           )}
         />
+        <View
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: 'bold',
+            }}>
+            Average age of cases
+          </Text>
+          <ProgressCircle
+            percent={30}
+            radius={67}
+            borderWidth={15}
+            color="#3399FF"
+            shadowColor="#999"
+            bgColor="#fff">
+            <Text style={{fontSize: 20, fontWeight: 'bold'}}>
+              {dataCovid.currentDayStats.averageAge}
+            </Text>
+          </ProgressCircle>
+        </View>
       </>
     );
   } else {
@@ -121,36 +133,3 @@ export default function Example() {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  gridView: {
-    marginTop: 10,
-    flex: 1,
-  },
-  itemContainer: {
-    borderRadius: 5,
-    padding: 10,
-    height: 150,
-    display: 'flex',
-    justifyContent: 'space-between',
-    flexDirection: 'column',
-  },
-  itemName: {
-    fontSize: 18,
-    color: '#fff',
-    fontWeight: '600',
-    alignSelf: 'flex-end',
-  },
-  itemCode: {
-    fontWeight: '600',
-    fontSize: 12,
-    color: '#fff',
-  },
-  itemNumber: {
-    fontWeight: '600',
-    fontSize: 40,
-    color: 'white',
-    alignItems: 'center',
-    fontWeight: 'bold',
-  },
-});
